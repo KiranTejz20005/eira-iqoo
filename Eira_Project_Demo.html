@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Eira — Mobile Prototype</title>
+<style>
+:root{
+  --ink:#151716; --ink2:#222421; --paper:#f5f3ea; --paper2:#ebe9df;
+  --white:#fffdf6; --mint:#d3ecdc; --green:#79c393; --green2:#a7dcb8;
+  --danger:#e95e50; --dangerBg:#fff0ed; --warn:#e7a23a; --line:#d0cec3;
+  --muted:#74766e; --soft:#9a9b92; --shadow:0 24px 70px rgba(0,0,0,.16);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#101210;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+#stage{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:36px;
+  background:
+    radial-gradient(circle at 20% 15%,#26352d 0,transparent 28%),
+    radial-gradient(circle at 85% 85%,#1c2720 0,transparent 30%),
+    #101210;
+}
+.phone{
+  width:390px;height:844px;max-width:94vw;background:var(--paper);border:9px solid #0b0c0b;
+  border-radius:44px;overflow:hidden;position:relative;box-shadow:var(--shadow),0 0 0 1px #ffffff12;
+}
+.status{height:31px;padding:7px 18px 0;display:flex;justify-content:space-between;font-size:11px;font-weight:800;position:relative;z-index:4}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:122px;height:25px;background:#0b0c0b;border-radius:0 0 18px 18px;z-index:5}
+.app{height:calc(100% - 31px);overflow:auto;scrollbar-width:none}
+.app::-webkit-scrollbar{display:none}
+.screen{min-height:100%;padding:22px 22px 112px;display:none;animation:screenIn .28s cubic-bezier(.2,.8,.2,1)}
+.screen.active{display:block}
+@keyframes screenIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+.brand{font-weight:950;letter-spacing:-.055em;font-size:26px}
+.iconbtn{width:38px;height:38px;border:1px solid var(--line);background:#ffffff66;border-radius:50%;font-size:17px}
+.kicker,.smallcaps{font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:900}
+h1{font-size:43px;line-height:.94;letter-spacing:-.055em;margin:12px 0 18px}
+h2{font-size:25px;line-height:1.08;letter-spacing:-.035em;margin:8px 0 14px}
+p{line-height:1.55;margin:0 0 15px}
+.muted{color:var(--muted)}
+.hero{
+  background:linear-gradient(145deg,#242624,#171917);color:#f8f6ed;border-radius:28px;padding:22px;
+  position:relative;overflow:hidden;box-shadow:0 18px 45px #00000018;
+}
+.hero:before{content:"";position:absolute;width:230px;height:230px;right:-90px;top:-110px;border-radius:50%;background:radial-gradient(circle,#86c99f55,transparent 68%)}
+.hero:after{content:"";position:absolute;width:160px;height:160px;left:-100px;bottom:-120px;border-radius:50%;border:1px solid #ffffff12}
+.hero>*{position:relative;z-index:1}
+.hero p{color:#d7d8d0;font-size:13px;max-width:310px}
+.hero-kicker{display:inline-flex;align-items:center;gap:7px;color:#a6dcb8!important}
+.hero-kicker i{width:7px;height:7px;border-radius:50%;background:#8fd3a6;box-shadow:0 0 0 5px #8fd3a615}
+.hero h1{font-size:42px;margin:14px 0}
+.btn{
+  width:100%;border:0;border-radius:16px;padding:15px 16px;font-weight:900;margin-top:8px;
+  background:var(--ink);color:#fff;transition:.2s transform,.2s box-shadow;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 10px 24px #0002}
+.btn.green{background:var(--green);color:#102017}
+.btn.secondary{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.btn.small{width:auto;padding:10px 13px;margin:0}
+.btn .arrow{float:right;font-size:17px}
+.card{
+  background:#fffdf7;border:1px solid #d8d6cb;border-radius:20px;padding:18px;margin:14px 0;
+  box-shadow:0 8px 24px #00000007;
+}
+.privacy{
+  display:flex;gap:10px;align-items:flex-start;padding:13px 14px;border-radius:17px;background:var(--mint);
+  font-size:11px;margin:14px 0;border:1px solid #b9dfc7;
+}
+.privacy-icon{width:24px;height:24px;border-radius:8px;background:#fff9;display:grid;place-items:center;font-weight:900;flex:none}
+.live-protect{
+  margin:15px 0;padding:17px;border-radius:21px;background:#171917;color:#f7f5eb;
+  box-shadow:0 14px 30px #0002;overflow:hidden;position:relative;
+}
+.live-protect:after{content:"";position:absolute;right:-60px;bottom:-75px;width:160px;height:160px;border-radius:50%;background:#83cb9e14}
+.live-top{display:flex;align-items:center;gap:8px;position:relative;z-index:1}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#7fc699;box-shadow:0 0 0 5px #7fc69920}
+.npu-pill{margin-left:auto;font-size:9px;font-weight:900;letter-spacing:.1em;padding:6px 8px;border:1px solid #ffffff22;border-radius:999px;color:#9fd3b3}
+.live-title{font-size:20px;font-weight:950;letter-spacing:-.045em;margin:13px 0 5px;position:relative;z-index:1}
+.live-sub{font-size:11px;line-height:1.45;color:#c9c8c1;margin-bottom:12px;position:relative;z-index:1}
+.live-row{display:flex;justify-content:space-between;border-top:1px solid #ffffff14;padding:9px 0 0;margin-top:8px;font-size:11px;color:#d8d7cf;position:relative;z-index:1}
+.live-row b{color:#7fc699;font-size:10px;letter-spacing:.08em}.live-row b.amber{color:#e6a33a}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{
+  border:1px solid var(--line);background:#fffdf7;border-radius:18px;padding:16px;min-height:116px;text-align:left;
+  transition:.2s transform,.2s border-color;
+}
+.tile:hover{transform:translateY(-2px);border-color:#a9a79d}
+.tile .tile-icon{width:31px;height:31px;border-radius:10px;background:#ecebe1;display:grid;place-items:center;font-size:15px}
+.tile b{display:block;margin:9px 0 5px;font-size:13px}.tile span{font-size:11px;color:var(--muted);line-height:1.35}
+.snapshot-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.snapshot-grid div{background:#ecebe2;border-radius:14px;padding:12px 8px;text-align:center}
+.snapshot-grid b{display:block;font-size:21px;letter-spacing:-.05em}.snapshot-grid span{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+.back{display:inline-flex;align-items:center;gap:6px;border:0;background:none;padding:0;color:var(--ink);font-weight:900;margin-bottom:20px}
+.check-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+.lang{display:flex;gap:6px;align-items:center}.lang select{padding:9px 10px;width:auto;border-radius:12px;background:#fffdf7}
+.choice{display:flex;gap:7px;overflow:auto;padding:2px 0 7px;margin-bottom:8px}
+.choice::-webkit-scrollbar{display:none}
+.choice button{white-space:nowrap;border:1px solid var(--line);background:#fffdf7;border-radius:999px;padding:9px 13px;font-size:11px;font-weight:900}
+.choice button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.input-card{padding:13px}
+.input-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.textarea-wrap{position:relative}
+textarea,input,select{width:100%;border:1px solid var(--line);border-radius:16px;background:#fffdf7;padding:14px;outline:none}
+textarea{min-height:190px;resize:none;line-height:1.55;font-size:13px}
+textarea:focus,input:focus,select:focus{border-color:var(--ink);box-shadow:0 0 0 3px #1718170c}
+.charcount{position:absolute;right:12px;bottom:10px;font-size:9px;color:var(--soft)}
+.sample-row{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
+.sample{font-size:10px;color:var(--muted);text-decoration:underline;cursor:pointer}
+.type-hint{font-size:10px;color:var(--soft)}
+.analyze-btn{display:flex;align-items:center;justify-content:space-between}
+.loader{padding:42px 8px 30px;text-align:center}
+.loader-orbit{width:88px;height:88px;margin:5px auto 24px;position:relative}
+.loader-ring{position:absolute;inset:0;border-radius:50%;border:1px solid #bfc0b7}
+.loader-ring:before{content:"";position:absolute;inset:9px;border-radius:50%;border:5px solid #d4d4ca;border-top-color:var(--ink);animation:spin .85s linear infinite}
+.loader-core{position:absolute;inset:28px;border-radius:50%;background:#171817;color:#9fd3b3;display:grid;place-items:center;font-size:9px;font-weight:950;letter-spacing:.08em}
+@keyframes spin{to{transform:rotate(360deg)}}
+.analysis-chips{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:18px 0}
+.analysis-chips span{font-size:8px;font-weight:950;letter-spacing:.08em;padding:7px 9px;border:1px solid var(--line);border-radius:999px;background:#fffdf7}
+.progress{height:7px;background:#d7d6cd;border-radius:99px;overflow:hidden;margin:18px 0}
+.progress i{display:block;width:0;height:100%;background:var(--green);transition:width 1.2s ease}
+.result-hero{background:#191b19;color:#fffdf6;border-radius:24px;padding:18px;margin:14px 0;position:relative;overflow:hidden}
+.result-hero:after{content:"";position:absolute;width:180px;height:180px;right:-80px;top:-85px;border-radius:50%;background:#e95e5020}
+.result-meta{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.badge{padding:7px 10px;border-radius:999px;font-size:9px;font-weight:950;letter-spacing:.1em;background:#4b211d;color:#ffaaa1;border:1px solid #e95e5040}
+.score-row{display:flex;align-items:center;gap:18px;margin-top:18px;position:relative;z-index:1}
+.score-ring{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--danger) 0 82%,#ffffff16 82% 100%);position:relative;flex:none}
+.score-ring:after{content:"";position:absolute;inset:7px;border-radius:50%;background:#191b19}
+.score-ring strong{position:relative;z-index:1;font-size:27px;letter-spacing:-.06em}
+.score-copy{font-size:11px;color:#c8c8c0;line-height:1.45}.score-copy b{display:block;color:#fff;font-size:14px;margin-bottom:4px}
+.signal{
+  display:flex;gap:12px;align-items:flex-start;border:1px solid #ddd9d0;padding:13px;border-radius:17px;background:#fffdf7;margin:9px 0;
+}
+.signal-icon{width:30px;height:30px;border-radius:10px;background:var(--dangerBg);color:var(--danger);display:grid;place-items:center;font-weight:950;flex:none}
+.signal b{display:block;margin-bottom:3px;font-size:13px}.signal span{font-size:11px;color:var(--muted);line-height:1.4}
+.explain-card{padding:16px;border-radius:19px;background:#fffdf7;border:1px solid #d9d7cc;margin:11px 0}
+.explain-top{display:flex;align-items:center;gap:9px}.signal-num{width:26px;height:26px;border-radius:9px;background:#ecebe2;display:grid;place-items:center;font-size:9px;font-weight:950}
+.step{display:flex;gap:12px;margin:15px 0;padding:12px 0;border-bottom:1px solid var(--line)}
+.step:last-of-type{border-bottom:0}.stepnum{width:31px;height:31px;border-radius:11px;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:950;font-size:11px;flex:none}
+.step b{font-size:13px}.step p{font-size:11px;margin-top:4px}
+.verify-banner{background:var(--mint);border:1px solid #b9dfc7;border-radius:20px;padding:16px}
+.listitem{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--danger)}.dot.green{background:var(--green)}
+.meta{margin-left:auto;text-align:right;font-size:10px;color:var(--muted)}
+.toast{position:absolute;left:18px;right:18px;bottom:88px;background:#171817;color:#fff;padding:13px 15px;border-radius:15px;font-size:11px;display:none;z-index:10}
+.toast.show{display:block;animation:toastIn .2s ease}@keyframes toastIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.nav{
+ position:absolute;bottom:0;left:0;right:0;background:rgba(247,245,235,.94);backdrop-filter:blur(18px);
+ border-top:1px solid #d2d0c5;height:82px;display:grid;grid-template-columns:repeat(3,1fr);
+ padding:8px 16px 11px;z-index:6;box-shadow:0 -10px 28px rgba(20,22,20,.05);
+}
+.nav button{
+ border:0;background:none;color:#85867e;font-size:10px;font-weight:800;letter-spacing:.01em;
+ border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:.18s ease;
+}
+.nav button.active{color:var(--ink);background:#e7e6dc}
+.nav .ico{width:30px;height:27px;border-radius:10px;display:grid;place-items:center;font-size:17px;margin:0;line-height:1}
+.nav button.active .ico{background:#171817;color:#fffdf6}
+
+.footer-note{font-size:9px;color:var(--muted);text-align:center;margin-top:18px}
+.sample-picker{display:flex;gap:7px;overflow:auto;margin-top:10px;padding-bottom:2px}
+.sample-picker::-webkit-scrollbar{display:none}
+.sample-chip{white-space:nowrap;border:1px solid var(--line);background:#efeee6;border-radius:999px;padding:8px 10px;font-size:10px;font-weight:850;color:#44453f}
+.sample-chip:active{transform:scale(.97)}
+.npu-inline{display:inline-flex;gap:6px;align-items:center;padding:7px 9px;border-radius:999px;background:#eef5ef;border:1px solid #c8dfce;font-size:9px;font-weight:950;color:#386c4b}
+.npu-inline i{width:6px;height:6px;border-radius:50%;background:#67b681}
+
+/* Premium automatic walkthrough */
+.demo-launch{
+ position:fixed;right:26px;bottom:26px;z-index:50;border:0;border-radius:999px;padding:14px 20px;
+ background:#f4f2e9;color:#171817;font-weight:950;box-shadow:0 16px 40px #0005;cursor:pointer;
+ transition:.2s transform,.2s box-shadow;
+}
+.demo-launch:hover{transform:translateY(-2px);box-shadow:0 22px 50px #0006}
+.demo-overlay{
+ position:fixed;inset:0;z-index:60;background:#090b09f5;display:none;align-items:center;justify-content:center;
+ padding:28px;overflow:auto;
+}
+.demo-overlay.show{display:flex}
+.demo-shell{width:min(1180px,96vw);min-height:min(760px,92vh);display:grid;grid-template-rows:auto 1fr auto;gap:18px}
+.demo-header{display:flex;align-items:center;justify-content:space-between;color:#f7f5ed}
+.demo-brand{font-size:20px;font-weight:950;letter-spacing:-.06em}
+.demo-brand span{font-size:9px;letter-spacing:.16em;color:#91d2a7;margin-left:10px;vertical-align:middle}
+.demo-close-top{border:1px solid #ffffff25;background:#ffffff08;color:#fff;padding:9px 13px;border-radius:999px;font-size:11px;font-weight:900}
+.demo-main{display:grid;grid-template-columns:minmax(360px,480px) minmax(350px,1fr);gap:70px;align-items:center}
+.demo-phone-area{display:flex;justify-content:center;position:relative}
+.demo-phone-area:before{content:"";position:absolute;width:360px;height:360px;border-radius:50%;background:#77c69312;filter:blur(10px)}
+.demo-phone-scale{position:relative;z-index:1;transform:scale(.88);transform-origin:center}.demo-phone-scale .nav{display:none}
+.demo-caption{color:#fffdf6;max-width:520px}
+.demo-eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#91d2a7;font-weight:950}
+.demo-caption h2{font-size:54px;line-height:.92;letter-spacing:-.07em;margin:12px 0 16px;max-width:500px}
+.demo-caption p{color:#c6c8c0;font-size:15px;line-height:1.55;max-width:500px}
+.demo-feature{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+.demo-feature span{padding:9px 11px;border-radius:999px;border:1px solid #ffffff18;background:#ffffff08;color:#d7d8d0;font-size:10px;font-weight:850}
+.demo-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.demo-controls button{border:1px solid #ffffff22;background:#ffffff08;color:#fff;padding:11px 15px;border-radius:13px;font-weight:900;font-size:11px}
+.demo-controls button.primary{background:#86c99f;color:#102117;border-color:#86c99f}
+.demo-timeline{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.demo-segment{height:4px;border-radius:99px;background:#ffffff18;overflow:hidden}
+.demo-segment i{display:block;height:100%;width:0;background:#86c99f;transition:width .2s}
+.demo-footer{display:flex;align-items:center;gap:14px;color:#92958d;font-size:10px}
+.demo-step-label{margin-left:auto}
+.demo-progressline{height:1px;background:#ffffff14;flex:1}
+
+/* Voice narration layer */
+.demo-voice-panel{
+  margin-top:14px;
+  padding:13px 14px;
+  border:1px solid #ffffff18;
+  background:linear-gradient(145deg,#ffffff0b,#ffffff05);
+  border-radius:17px;
+  backdrop-filter:blur(12px);
+}
+.demo-voice-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#e9e9e2;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.demo-voice-dot{
+  display:inline-block;
+  width:7px;
+  height:7px;
+  margin-right:7px;
+  border-radius:50%;
+  background:#6c7270;
+  vertical-align:middle;
+}
+.demo-voice-panel.speaking .demo-voice-dot{
+  background:#86c99f;
+  box-shadow:0 0 0 5px #86c99f18;
+  animation:narrationPulse 1s ease-in-out infinite;
+}
+.demo-voice-panel.paused .demo-voice-dot{background:#e6a33a}
+@keyframes narrationPulse{50%{transform:scale(.72);opacity:.6}}
+.demo-voice-text{
+  margin-top:9px;
+  color:#bfc2ba;
+  font-size:11px;
+  line-height:1.5;
+  min-height:34px;
+}
+.demo-voice-controls{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:7px;
+  margin-top:10px;
+}
+.demo-voice-controls select,
+.demo-voice-controls button{
+  min-width:0;
+  border:1px solid #ffffff1d;
+  background:#ffffff08;
+  color:#e9e9e2;
+  border-radius:11px;
+  padding:9px 10px;
+  font-size:10px;
+  font-weight:800;
+  outline:none;
+}
+.demo-voice-controls select option{color:#171817;background:#f5f3ea}
+.demo-voice-controls button{cursor:pointer}
+.demo-voice-controls button:hover{background:#ffffff12}
+.demo-voice-panel.voice-disabled{opacity:.55}
+@media(max-width:900px){
+  .demo-voice-panel{max-width:520px;width:100%;margin-left:auto;margin-right:auto}
+}
+
+@media(max-width:900px){
+ .demo-main{grid-template-columns:1fr;gap:10px;justify-items:center}
+ .demo-caption{text-align:center}.demo-caption h2{font-size:40px}.demo-caption p{margin-left:auto;margin-right:auto}
+ .demo-feature,.demo-controls{justify-content:center}.demo-phone-scale{transform:scale(.62)}
+ .demo-shell{min-height:auto}
+}
+@media(max-width:560px){
+ #stage{padding:12px}.phone{height:780px}.demo-overlay{padding:16px}.demo-shell{gap:8px}
+ .demo-phone-scale{transform:scale(.55)}.demo-caption h2{font-size:34px}.demo-footer{display:none}.demo-main{gap:0}
+}
+</style>
+</head>
+<body>
+<div id="stage">
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status"><span id="time">9:41</span><span>● ● ▰</span></div>
+  <main class="app">
+    <section id="home" class="screen active">
+      <div class="topbar"><div class="brand">EIRA</div><button class="iconbtn" onclick="show('settings')">⚙</button></div>
+      <div class="hero">
+        <div class="kicker" style="color:#9fd3b3">Know what to trust</div>
+        <h1 style="font-size:40px;margin-top:12px">Before you<br>click. Check.</h1>
+        <p>Share a message, screenshot, link or voice note. Eira explains the warning signs and gives you safer next steps.</p>
+        <button class="btn green" onclick="show('check')">Check something</button>
+      </div>
+      <div class="privacy"><span>◉</span><div><b>On-device privacy</b><br>Your sensitive content is designed to be analyzed locally when supported by the device.</div></div>
+      <div class="live-protect">
+        <div class="live-top"><span class="live-dot"></span><span class="smallcaps" style="color:#8ed2a7">Live protection</span><span class="npu-pill">NPU READY</span></div>
+        <div class="live-title">Eira can flag risk before you act.</div>
+        <div class="live-sub">Suspicious links, urgent requests and impersonation patterns can trigger an instant warning.</div>
+        <div class="live-row"><span>Link risk</span><b>LOW</b></div>
+        <div class="live-row"><span>Message risk</span><b class="amber">WATCH</b></div>
+      </div>
+      <div class="topbar" style="margin:22px 0 10px"><h2 style="margin:0">What can I check?</h2><span class="smallcaps">4 inputs</span></div>
+      <div class="grid2">
+        <button class="tile" onclick="startType('message')">💬<b>Message</b><span>Chats, SMS and copied text</span></button>
+        <button class="tile" onclick="startType('screenshot')">▣<b>Screenshot</b><span>Social posts and alerts</span></button>
+        <button class="tile" onclick="startType('link')">↗<b>Link</b><span>Suspicious URLs</span></button>
+        <button class="tile" onclick="startType('voice')">◉<b>Voice note</b><span>Audio requests and alerts</span></button>
+      </div>
+      <div class="card">
+        <div class="smallcaps">Protection snapshot</div>
+        <div class="snapshot-grid">
+          <div><b>3</b><span>languages</span></div>
+          <div><b>4</b><span>input types</span></div>
+          <div><b>24/7</b><span>local-first</span></div>
+        </div>
+        <button class="btn secondary" onclick="toast('Eira protection is active')">Protect me</button>
+      </div>
+      <div class="card">
+        <div class="smallcaps">Demo shortcut</div>
+        <p style="margin:6px 0 10px"><b>Try a rotating demo scenario</b></p>
+        <button class="btn secondary" onclick="startType('message');setTimeout(loadSample,50)">Load random sample</button>
+        <div class="sample-picker">
+          <button class="sample-chip" onclick="startType('message');setTimeout(()=>loadSample(0),50)">Bank alert</button>
+          <button class="sample-chip" onclick="startType('message');setTimeout(()=>loadSample(1),50)">Delivery scam</button>
+          <button class="sample-chip" onclick="startType('message');setTimeout(()=>loadSample(2),50)">Prize claim</button>
+          <button class="sample-chip" onclick="startType('message');setTimeout(()=>loadSample(3),50)">Job offer</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="check" class="screen">
+      <button class="back" onclick="show('home')">‹ Back</button>
+      <div class="topbar"><div><div class="kicker">New check</div><h2>Share with Eira</h2></div><div class="lang">🌐 <select id="language"><option>English</option><option>Telugu</option><option>Hindi</option></select></div></div>
+      <div class="choice" id="types">
+        <button data-type="message" onclick="selectType('message')">Message</button>
+        <button data-type="screenshot" onclick="selectType('screenshot')">Screenshot</button>
+        <button data-type="link" onclick="selectType('link')">Link</button>
+        <button data-type="voice" onclick="selectType('voice')">Voice</button>
+      </div>
+      <div id="inputArea" class="card">
+        <div class="smallcaps" id="inputLabel">Message content</div>
+        <textarea id="content" placeholder="Paste the message you received..."></textarea>
+        <div class="sample" onclick="loadSample()">Use demo content</div>
+      </div>
+      <div class="privacy"><span>⌁</span><div><b>Private by design</b><br>Prototype flow represents Eira's on-device analysis concept. No content is uploaded by this demo.</div></div>
+      <button class="btn" onclick="analyze()">Analyze with Eira</button>
+      <button class="btn secondary" onclick="show('home')">Cancel</button>
+    </section>
+
+    <section id="loading" class="screen">
+      <div class="loader">
+        <div class="smallcaps">Eira is checking</div>
+        <div class="spinner"></div>
+        <h2>Analyzing on-device</h2>
+        <p class="muted">Looking for urgency, suspicious requests, manipulation and other warning signs.</p>
+        <div class="progress"><i></i></div>
+        <div class="analysis-chips">
+          <span>OCR</span><span>RISK MODEL</span><span>NPU</span><span>GUIDANCE</span>
+        </div>
+        <p class="smallcaps">Local analysis • Privacy-first</p>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <button class="back" onclick="show('check')">‹ New check</button>
+      <div class="result-head">
+        <div><div class="kicker">Eira analysis</div><h2 style="margin-bottom:4px">Suspicious signals found</h2></div>
+        <span class="badge">HIGH RISK</span>
+      </div>
+      <div class="card" style="text-align:center;padding:20px">
+        <div class="smallcaps">Risk indicator</div>
+        <div class="score">82</div>
+        <div class="muted" style="font-size:12px">Prototype risk score for demonstration</div>
+      </div>
+      <div class="smallcaps">Why it looks suspicious</div>
+      <div class="signal"><b>Urgency</b><span>Pressure to act immediately can be a scam signal.</span></div>
+      <div class="signal"><b>Payment request</b><span>The message asks for money before independent verification.</span></div>
+      <div class="signal"><b>Unverified identity</b><span>The sender's claim should be checked through an official channel.</span></div>
+      <button class="btn" onclick="show('details')">Explain the risk</button>
+      <button class="btn secondary" onclick="show('verify')">Show safe next steps</button>
+    </section>
+
+    <section id="details" class="screen">
+      <button class="back" onclick="show('result')">‹ Back to result</button>
+      <div class="kicker">Explainable guidance</div>
+      <h1 style="font-size:38px">Why should<br>I be careful?</h1>
+      <p>Eira doesn't stop at a label. It points out the specific patterns that deserve attention.</p>
+      <div class="card">
+        <div class="smallcaps">Signal 01</div><h2>Urgency language</h2>
+        <p class="muted">The request creates pressure to act now. Scammers commonly use time pressure to reduce careful checking.</p>
+      </div>
+      <div class="card">
+        <div class="smallcaps">Signal 02</div><h2>Request for payment</h2>
+        <p class="muted">Money is requested before the sender's identity or claim has been independently confirmed.</p>
+      </div>
+      <div class="card">
+        <div class="smallcaps">Signal 03</div><h2>Missing verification</h2>
+        <p class="muted">A genuine request should be checked using contact details from an official source, not the message itself.</p>
+      </div>
+      <button class="btn green" onclick="show('verify')">What should I do?</button>
+    </section>
+
+    <section id="verify" class="screen">
+      <button class="back" onclick="show('result')">‹ Back to result</button>
+      <div class="kicker">Verify & act</div>
+      <h1 style="font-size:38px">Safer next<br>steps.</h1>
+      <div class="step"><div class="stepnum">1</div><div><b>Don't pay yet</b><p class="muted">Pause before sending money or sharing sensitive information.</p></div></div>
+      <div class="step"><div class="stepnum">2</div><div><b>Verify independently</b><p class="muted">Use the organization's official website or a known phone number.</p></div></div>
+      <div class="step"><div class="stepnum">3</div><div><b>Don't forward it</b><p class="muted">Avoid spreading the message until the claim is verified.</p></div></div>
+      <div class="card" style="background:var(--mint)"><b>Remember</b><p style="margin:5px 0 0;font-size:13px">Eira gives guidance, not a guarantee. When money, accounts or safety are involved, verify through a trusted official source.</p></div>
+      <button class="btn" onclick="toast('Check saved to your Eira history')">Save result</button>
+    </section>
+
+    <section id="history" class="screen">
+      <div class="topbar"><div><div class="kicker">Your checks</div><h2>History</h2></div><button class="iconbtn" onclick="toast('History is stored locally in this prototype')">ⓘ</button></div>
+      <div class="card">
+        <div class="listitem"><span class="dot"></span><div><b>Payment request</b><div class="muted" style="font-size:11px">Message • High risk</div></div><div class="meta">Today<br>82</div></div>
+        <div class="listitem"><span class="dot green"></span><div><b>Delivery update</b><div class="muted" style="font-size:11px">Link • Low signals</div></div><div class="meta">Yesterday<br>18</div></div>
+        <div class="listitem"><span class="dot"></span><div><b>Bank alert</b><div class="muted" style="font-size:11px">Screenshot • Review</div></div><div class="meta">Sep 16<br>64</div></div>
+      </div>
+      <button class="btn" onclick="show('check')">Run a new check</button>
+    </section>
+
+    <section id="settings" class="screen">
+      <button class="back" onclick="show('home')">‹ Back</button>
+      <div class="kicker">Eira</div><h1 style="font-size:38px">Privacy &<br>settings</h1>
+      <div class="card">
+        <div class="topbar" style="margin:0"><div><b>On-device analysis</b><div class="muted" style="font-size:12px">Use supported phone AI capabilities</div></div><b style="color:var(--ok)">ON</b></div>
+      </div>
+      <div class="card">
+        <div class="topbar" style="margin:0"><div><b>Local history</b><div class="muted" style="font-size:12px">Keep your checks on this device</div></div><b>ON</b></div>
+      </div>
+      <div class="card">
+        <div class="smallcaps">About this prototype</div>
+        <p style="margin-top:7px">Eira is a privacy-first mobile concept for understanding suspicious messages, screenshots, links and voice notes.</p>
+        <p class="muted" style="font-size:12px">Designed for Team Varanasi • IQ hackathon presentation demo</p>
+      </div>
+    </section>
+  </main>
+  <div class="nav">
+    <button id="nav-home" class="active" onclick="show('home')"><span class="ico">⌂</span>Home</button>
+    <button id="nav-check" onclick="show('check')"><span class="ico">＋</span>Check</button>
+    <button id="nav-history" onclick="show('history')"><span class="ico">◷</span>History</button>
+  </div>
+  <div id="toast" class="toast"></div>
+</div>
+</div>
+<script>
+const screens=[...document.querySelectorAll('.screen')];
+let currentType='message';
+const labels={message:'Message content',screenshot:'Screenshot description / OCR text',link:'Paste suspicious link',voice:'Voice note transcript'};
+const placeholders={
+ message:'Paste the message you received...',
+ screenshot:'Paste or describe the screenshot content...',
+ link:'https://example.com/claim...',
+ voice:'Paste a voice-note transcript for the demo...'
+};
+function show(id){
+  screens.forEach(s=>s.classList.toggle('active',s.id===id));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  if(id==='home')document.getElementById('nav-home').classList.add('active');
+  if(id==='check')document.getElementById('nav-check').classList.add('active');
+  if(id==='history')document.getElementById('nav-history').classList.add('active');
+  document.querySelector('.app').scrollTop=0;
+}
+function selectType(type){
+ currentType=type;
+ document.querySelectorAll('#types button').forEach(b=>b.classList.toggle('active',b.dataset.type===type));
+ document.getElementById('inputLabel').textContent=labels[type];
+ document.getElementById('content').placeholder=placeholders[type];
+ if(type==='screenshot')document.getElementById('content').value='';
+ if(type==='voice')document.getElementById('content').value='';
+}
+function startType(type){show('check');selectType(type)}
+const demoSamples=[
+ {type:'message',title:'Bank account warning',risk:91,level:'HIGH RISK',text:'URGENT: Your bank account will be blocked today. Verify your account immediately by paying ₹1,999 using this link. Do not call the bank or tell anyone until verification is complete.',signals:[['Urgency','The message pressures you to act immediately instead of giving you time to verify.'],['Payment request','It asks for money before the request has been independently confirmed.'],['Pressure to stay silent','It discourages contacting the bank or other people for verification.']]},
+ {type:'message',title:'Delivery fee request',risk:74,level:'REVIEW',text:'Your parcel could not be delivered. Pay ₹89 within 30 minutes to reschedule delivery. Confirm your address here: http://delivery-check.example/track',signals:[['Time pressure','A short deadline is used to push a quick decision.'],['Unexpected payment','A small payment is requested before delivery details are independently confirmed.'],['Suspicious link','The domain does not clearly match an official delivery service.']]},
+ {type:'message',title:'Prize notification',risk:86,level:'HIGH RISK',text:'Congratulations! Your mobile number has won ₹25,00,000 in our special customer reward. Pay the ₹499 processing charge today to release your prize. Reply YES to claim.',signals:[['Unexpected prize','The message claims a reward without a clear reason you entered a promotion.'],['Upfront fee','It asks you to pay before receiving the claimed prize.'],['Manipulative call to action','The message pushes an immediate reply rather than independent verification.']]},
+ {type:'message',title:'Job offer message',risk:68,level:'REVIEW',text:'You have been shortlisted for a remote data-entry job. Send your Aadhaar, PAN and a ₹299 registration fee within 1 hour to secure your position.',signals:[['Sensitive information','The sender requests identity documents before the opportunity is independently verified.'],['Registration fee','An upfront payment is requested for a job opportunity.'],['Urgency','The one-hour deadline creates pressure to act quickly.']]},
+ {type:'message',title:'Fake account alert',risk:79,level:'REVIEW',text:'Security alert: We detected unusual activity. Your account will be suspended unless you confirm your password and OTP using the verification page below.',signals:[['Credential request','A request for passwords or OTPs is a strong reason to stop and verify independently.'],['Account threat','The suspension warning creates urgency and fear.'],['Unverified link','The verification page should be reached through the official service, not the message.']]}
+];
+let currentSample=demoSamples[0];
+
+function loadSample(index=null){
+ const pick=index===null ? demoSamples[Math.floor(Math.random()*demoSamples.length)] : demoSamples[index%demoSamples.length];
+ currentSample=pick; currentType=pick.type; show('check'); selectType(pick.type);
+ document.getElementById('content').value=pick.text;
+ toast('Loaded: '+pick.title);
+}
+function renderResult(){
+ const r=currentSample;
+ const result=document.getElementById('result');
+ result.querySelector('h2').textContent=r.title;
+ result.querySelector('.badge').textContent=r.level;
+ result.querySelector('.score').textContent=r.risk;
+ result.querySelectorAll('.signal').forEach((el,i)=>{
+   const b=el.querySelector('b'), span=el.querySelector('span');
+   if(r.signals[i]){b.textContent=r.signals[i][0]; if(span) span.textContent=r.signals[i][1];}
+ });
+}
+function analyze(){
+ if(!document.getElementById('content').value.trim()){
+   toast('Add some content first, or tap “Use demo content”.'); return;
+ }
+ show('loading');
+ setTimeout(()=>{renderResult();show('result');},1500);
+}
+function toast(msg){
+ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+ setTimeout(()=>t.classList.remove('show'),2400);
+}
+document.getElementById('time').textContent=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+selectType('message');
+</script>
+
+
+<button class="demo-launch" id="demoLaunch">▶&nbsp; Product walkthrough</button>
+
+<div class="demo-overlay" id="demoOverlay" aria-hidden="true">
+  <div class="demo-shell">
+    <header class="demo-header">
+      <div class="demo-brand">EIRA <span>LIVE PRODUCT TOUR</span></div>
+      <button class="demo-close-top" id="demoCloseTop">ESC&nbsp;&nbsp; Exit</button>
+    </header>
+
+    <div class="demo-main">
+      <div class="demo-phone-area">
+        <div class="demo-phone-scale">
+          <div class="phone" id="demoPhone">
+            <div class="notch"></div>
+            <div class="status"><span id="demoTime">9:41</span><span>● ● ▰</span></div>
+            <main class="app" id="demoApp"></main>
+          </div>
+        </div>
+      </div>
+
+      <section class="demo-caption">
+        <div class="demo-eyebrow" id="demoEyebrow">EIRA • INTRO</div>
+        <h2 id="demoTitle">Before you click.<br>Check.</h2>
+        <p id="demoText">A hands-free walkthrough of how Eira helps a user move from a suspicious message to a safer decision.</p>
+        <div class="demo-feature" id="demoFeature"></div>
+        <div class="demo-controls">
+          <button class="primary" id="demoNext">Next&nbsp; →</button>
+          <button id="demoPause">Pause</button>
+          <button id="demoReplay">Replay</button>
+          <button id="demoVoice">🔊 Voice</button>
+          <button id="demoClose">Exit demo</button>
+        </div>
+        <div class="demo-voice-panel" id="demoVoicePanel">
+          <div class="demo-voice-head">
+            <span><span class="demo-voice-dot"></span>Live narration</span>
+            <span id="demoVoiceState">Ready</span>
+          </div>
+          <div class="demo-voice-text" id="demoVoiceText">
+            The narration stays on this step until its explanation is complete.
+          </div>
+          <div class="demo-voice-controls">
+            <select id="demoVoiceSelect" aria-label="Narration voice"></select>
+            <button id="demoVoiceReplay">▶ Replay voice</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="demo-footer">
+      <div class="demo-timeline" id="demoTimeline" style="flex:1"></div>
+      <div class="demo-progressline"></div>
+      <div class="demo-step-label" id="demoStep">01 / 06</div>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function(){
+  /*
+   * EIRA LIVE WALKTHROUGH
+   * ---------------------
+   * This version uses a strict state machine:
+   *
+   * 1. Render ONE slide.
+   * 2. Narrate only that slide, sentence by sentence.
+   * 3. Wait until ALL narration for that slide finishes.
+   * 4. Hold the slide briefly so the audience can see it.
+   * 5. Advance exactly once.
+   *
+   * Navigation, replay and exit invalidate the current run with a token.
+   * That prevents old speech callbacks/timers from moving the presentation
+   * to another slide unexpectedly.
+   */
+
+  const launch=document.getElementById('demoLaunch');
+  const overlay=document.getElementById('demoOverlay');
+  const demoApp=document.getElementById('demoApp');
+  const originalApp=document.querySelector('#stage .phone .app');
+
+  const title=document.getElementById('demoTitle');
+  const text=document.getElementById('demoText');
+  const eyebrow=document.getElementById('demoEyebrow');
+  const feature=document.getElementById('demoFeature');
+  const next=document.getElementById('demoNext');
+  const pause=document.getElementById('demoPause');
+  const replay=document.getElementById('demoReplay');
+  const close=document.getElementById('demoClose');
+  const closeTop=document.getElementById('demoCloseTop');
+  const stepLabel=document.getElementById('demoStep');
+  const timeline=document.getElementById('demoTimeline');
+
+  const voiceBtn=document.getElementById('demoVoice');
+  const voicePanel=document.getElementById('demoVoicePanel');
+  const voiceText=document.getElementById('demoVoiceText');
+  const voiceState=document.getElementById('demoVoiceState');
+  const voiceSelect=document.getElementById('demoVoiceSelect');
+  const voiceReplay=document.getElementById('demoVoiceReplay');
+
+  const steps=[
+    {
+      screen:'home',
+      eyebrow:'EIRA • INTRO',
+      title:'Before you click.<br>Check.',
+      text:'Eira gives people a private first layer of protection when a digital message does not feel right.',
+      tags:['Private by design','Local-first AI','Explainable guidance'],
+      hold:1300,
+      narration:[
+        "Every day, we receive messages, links, screenshots, and claims that look completely genuine.",
+        "The difficult part is that we often have only a few seconds to decide whether we should trust them.",
+        "Eira is designed to give the user that missing moment of clarity.",
+        "Before you click, pay, believe, or forward something, you can check it with Eira.",
+        "The key idea is simple: Eira does not ask you to blindly trust an AI answer. It helps you understand the signals behind the risk."
+      ]
+    },
+    {
+      screen:'check',
+      eyebrow:'STEP 01 • SHARE',
+      title:'Bring the<br>message in.',
+      text:'One simple flow for messages, screenshots, links and voice notes.',
+      tags:['Message','Screenshot','Link','Voice note'],
+      hold:1400,
+      narration:[
+        "The first step is simple: bring the suspicious content into Eira.",
+        "Eira is designed around four common inputs: messages, screenshots, links, and voice notes.",
+        "For this demonstration, we are checking a message that claims a bank account will be blocked unless the user makes an urgent payment.",
+        "Notice that the user does not need to understand the scam pattern before starting the check.",
+        "They simply share the content, and Eira takes care of the analysis."
+      ]
+    },
+    {
+      screen:'loading',
+      eyebrow:'STEP 02 • ANALYZE',
+      title:'AI checks the<br>warning signs.',
+      text:'The analysis stage makes the intelligence visible instead of hiding it behind a black-box result.',
+      tags:['Content extraction','Risk signals','On-device AI','Guidance'],
+      hold:1500,
+      narration:[
+        "Now Eira begins the analysis.",
+        "Instead of jumping straight to a yes-or-no verdict, the experience is built around the signals that matter.",
+        "The system can look for patterns such as urgency, suspicious requests, manipulation, impersonation, and misleading language.",
+        "The product is designed around on-device processing whenever the required AI capabilities are supported by the phone.",
+        "That means sensitive content can be analyzed locally, reducing unnecessary dependence on the cloud.",
+        "The important part for the user is that the analysis is translated into something understandable."
+      ]
+    },
+    {
+      screen:'result',
+      eyebrow:'STEP 03 • DETECT',
+      title:'Not just “fake”.<br>Here is why.',
+      text:'Eira turns a vague feeling into specific, explainable risk signals.',
+      tags:['HIGH RISK','82 indicator','3 signals'],
+      hold:1700,
+      narration:[
+        "Here is the result.",
+        "Eira has identified several signals that deserve attention, and the prototype marks this example as high risk.",
+        "First, there is urgency: the message pressures the user to act immediately.",
+        "Second, there is a payment request before the claim has been independently verified.",
+        "And third, the sender's identity has not been reliably confirmed.",
+        "Instead of simply saying 'this is fake,' Eira shows the user why the message looks suspicious.",
+        "That explanation is the core of the experience."
+      ]
+    },
+    {
+      screen:'details',
+      eyebrow:'STEP 04 • EXPLAIN',
+      title:'Understand the<br>warning.',
+      text:'Every warning comes with context, so the user can understand what triggered it.',
+      tags:['Urgency','Payment request','Missing verification'],
+      hold:1500,
+      narration:[
+        "Now we go one level deeper.",
+        "Eira explains what each signal means in plain language.",
+        "Urgency matters because pressure can make people act before they have time to verify a claim.",
+        "A payment request creates a direct financial risk when the sender has not been independently confirmed.",
+        "And when verification is missing, Eira makes that limitation visible instead of pretending it knows more than it does.",
+        "The goal here is not to create fear. The goal is to give the user enough context to make a careful decision."
+      ]
+    },
+    {
+      screen:'verify',
+      eyebrow:'STEP 05 • ACT',
+      title:'Pause. Verify.<br>Then act.',
+      text:'Eira finishes with practical verification steps instead of leaving the user with a warning.',
+      tags:['Pause first','Verify independently','Do not forward'],
+      hold:2200,
+      narration:[
+        "Finally, Eira turns the explanation into action.",
+        "First, pause. Do not pay or share sensitive information while the claim is still unverified.",
+        "Second, verify independently. Use an official website, a trusted phone number, or another source you already know is genuine.",
+        "Third, avoid forwarding the message while you are still checking it.",
+        "This is the complete Eira flow: share the content, analyze the signals, understand the risk, and then verify before acting.",
+        "Eira is not trying to make the decision for the user. It is giving them the information they need to make a safer decision themselves."
+      ]
+    }
+  ];
+
+  let index=0;
+  let runToken=0;
+  let paused=false;
+  let playing=false;
+  let narrationEnabled=true;
+  let voicesReady=false;
+  let selectedVoice=null;
+  let sentenceIndex=0;
+  let sentenceTimer=null;
+  let advanceTimer=null;
+  let built=false;
+
+  function getDemoScreens(){
+    if(!built){
+      demoApp.innerHTML='';
+      [...originalApp.querySelectorAll('.screen')].forEach(source=>{
+        const clone=source.cloneNode(true);
+        clone.removeAttribute('id');
+        clone.classList.remove('active');
+        clone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+        clone.querySelectorAll('[onclick]').forEach(el=>el.removeAttribute('onclick'));
+        demoApp.appendChild(clone);
+      });
+      built=true;
+    }
+    return [...demoApp.querySelectorAll('.screen')];
+  }
+
+  function renderPhone(){
+    const screens=getDemoScreens();
+    screens.forEach((s,i)=>{
+      s.classList.toggle('active',i===index);
+      s.style.display=i===index?'block':'none';
+    });
+
+    if(index===1){
+      const textarea=screens[1].querySelector('textarea');
+      if(textarea){
+        const message="URGENT: Your bank account will be blocked today. Verify your account immediately by paying ₹1,999 using this link. Do not call the bank or tell anyone until verification is complete.";
+        textarea.value='';
+        let p=0;
+        const tokenAtStart=runToken;
+        const typeIt=()=>{
+          if(tokenAtStart!==runToken || index!==1 || !overlay.classList.contains('show') || paused) return;
+          textarea.value=message.slice(0,p++);
+          if(p<=message.length){
+            textarea.dispatchEvent(new Event('input'));
+            setTimeout(typeIt,12);
+          }
+        };
+        setTimeout(typeIt,350);
+      }
+    }
+
+    if(index===2){
+      const bar=screens[2].querySelector('.progress i');
+      if(bar){
+        bar.style.transition='none';
+        bar.style.width='0';
+        setTimeout(()=>{
+          if(runToken) {
+            bar.style.transition='width 2.8s ease';
+            bar.style.width='94%';
+          }
+        },180);
+      }
+    }
+
+    demoApp.scrollTop=0;
+  }
+
+  function renderMeta(){
+    const s=steps[index];
+    eyebrow.textContent=s.eyebrow;
+    title.innerHTML=s.title;
+    text.textContent=s.text;
+    feature.innerHTML=s.tags.map(t=>'<span>'+t+'</span>').join('');
+    stepLabel.textContent=String(index+1).padStart(2,'0')+' / '+String(steps.length).padStart(2,'0');
+    next.textContent=index===steps.length-1?'Replay  ↻':'Next  →';
+    voiceText.textContent=s.narration.join(' ');
+    timeline.innerHTML=steps.map((_,i)=>
+      '<div class="demo-segment"><i style="width:'+(i<index?'100%':'0%')+'"></i></div>'
+    ).join('');
+
+    const active=timeline.children[index];
+    if(active){
+      const fill=active.querySelector('i');
+      requestAnimationFrame(()=>{
+        fill.style.transition='width '+Math.max(6000, estimateStepMs(s))+'ms linear';
+        fill.style.width='100%';
+      });
+    }
+  }
+
+  function estimateStepMs(step){
+    // Visual timeline is intentionally a little longer than spoken content.
+    const chars=step.narration.join(' ').length;
+    return Math.max(9000, Math.min(26000, chars*38));
+  }
+
+  function setVoiceState(state){
+    voiceState.textContent=state;
+    voicePanel.classList.toggle('speaking',state==='Narrating');
+    voicePanel.classList.toggle('paused',state==='Paused');
+  }
+
+  function populateVoices(){
+    if(!('speechSynthesis' in window)){
+      narrationEnabled=false;
+      voiceBtn.textContent='🔇 Voice unavailable';
+      voiceBtn.disabled=true;
+      voicePanel.classList.add('voice-disabled');
+      setVoiceState('Unavailable');
+      return;
+    }
+
+    const all=window.speechSynthesis.getVoices();
+    if(!all.length) return;
+
+    const english=all.filter(v=>/^en(-|_)/i.test(v.lang));
+    const list=english.length?english:all;
+
+    const preferred=[
+      'Microsoft Aria',
+      'Microsoft Jenny',
+      'Microsoft Guy',
+      'Google US English',
+      'Google UK English Female',
+      'Samantha',
+      'Karen',
+      'Daniel'
+    ];
+
+    const oldName=selectedVoice?.name;
+    selectedVoice=list.find(v=>v.name===oldName)
+      || preferred.map(name=>list.find(v=>v.name.toLowerCase().includes(name.toLowerCase()))).find(Boolean)
+      || list.find(v=>v.lang.toLowerCase()==='en-in')
+      || list.find(v=>v.lang.toLowerCase()==='en-us')
+      || list[0];
+
+    voiceSelect.innerHTML='';
+    list.forEach(v=>{
+      const option=document.createElement('option');
+      option.value=v.name;
+      option.textContent=v.name+' · '+v.lang;
+      voiceSelect.appendChild(option);
+    });
+
+    if(selectedVoice) voiceSelect.value=selectedVoice.name;
+    voicesReady=true;
+  }
+
+  function cancelSpeech(){
+    if('speechSynthesis' in window){
+      window.speechSynthesis.cancel();
+    }
+    clearTimeout(sentenceTimer);
+    sentenceTimer=null;
+    setVoiceState(narrationEnabled?'Ready':'Off');
+  }
+
+  function wait(ms, token){
+    return new Promise(resolve=>{
+      const id=setTimeout(()=>{
+        if(token===runToken) resolve();
+      },ms);
+      advanceTimer=id;
+    });
+  }
+
+  function speakSentence(token, stepAtStart, sentenceAtStart){
+    return new Promise(resolve=>{
+      if(
+        token!==runToken ||
+        stepAtStart!==index ||
+        !playing ||
+        paused ||
+        !narrationEnabled ||
+        !('speechSynthesis' in window)
+      ){
+        resolve(false);
+        return;
+      }
+
+      const sentence=steps[stepAtStart].narration[sentenceAtStart];
+      if(!sentence){
+        resolve(true);
+        return;
+      }
+
+      const utterance=new SpeechSynthesisUtterance(sentence);
+
+      // Natural but clear presentation delivery.
+      utterance.lang='en-IN';
+      utterance.rate=0.91;
+      utterance.pitch=0.98;
+      utterance.volume=1;
+
+      if(selectedVoice) utterance.voice=selectedVoice;
+
+      let settled=false;
+      const finish=(ok)=>{
+        if(settled) return;
+        settled=true;
+        clearTimeout(sentenceTimer);
+        sentenceTimer=null;
+        resolve(ok);
+      };
+
+      utterance.onstart=()=>{
+        if(token!==runToken){
+          try{window.speechSynthesis.cancel()}catch(e){}
+          finish(false);
+          return;
+        }
+        setVoiceState('Narrating');
+      };
+
+      utterance.onend=()=>{
+        finish(token===runToken && stepAtStart===index);
+      };
+
+      utterance.onerror=()=>{
+        // Browser TTS can occasionally throw "interrupted" when another
+        // action occurs. Treat it as a cancellation, never as a signal to
+        // advance to the next slide.
+        finish(false);
+      };
+
+      // A safety timeout prevents one broken browser voice from hanging
+      // the presentation forever. It does NOT advance the slide itself.
+      const safetyMs=Math.max(9000, sentence.length*150);
+      sentenceTimer=setTimeout(()=>{
+        try{window.speechSynthesis.cancel()}catch(e){}
+        finish(false);
+      },safetyMs);
+
+      try{
+        window.speechSynthesis.speak(utterance);
+      }catch(e){
+        finish(false);
+      }
+    });
+  }
+
+  async function narrateStep(token){
+    if(!narrationEnabled || !('speechSynthesis' in window)){
+      setVoiceState('Voice off');
+      return true;
+    }
+
+    sentenceIndex=0;
+    setVoiceState('Preparing');
+
+    while(sentenceIndex<steps[index].narration.length){
+      if(token!==runToken || !playing) return false;
+
+      // Pause is a real pause: we do not change slide or sentence.
+      while(paused){
+        await new Promise(resolve=>setTimeout(resolve,120));
+        if(token!==runToken || !playing) return false;
+      }
+
+      const currentSentence=sentenceIndex;
+      const spoken=await speakSentence(token,index,currentSentence);
+
+      if(token!==runToken || !playing) return false;
+
+      if(spoken){
+        sentenceIndex++;
+      }else{
+        // If speech failed, do NOT skip the rest of the explanation.
+        // Retry the same sentence once after a short quiet period.
+        await new Promise(resolve=>setTimeout(resolve,300));
+        if(token!==runToken || !playing) return false;
+
+        const retry=await speakSentence(token,index,currentSentence);
+        if(retry) sentenceIndex++;
+        else{
+          // Voice is unavailable/broken. Keep the slide visible and let
+          // the user continue manually instead of jumping slides.
+          setVoiceState('Voice issue • tap Next');
+          return false;
+        }
+      }
+
+      // Natural pause between sentences.
+      if(sentenceIndex<steps[index].narration.length){
+        await new Promise(resolve=>setTimeout(resolve,260));
+      }
+    }
+
+    setVoiceState('Finished');
+    return true;
+  }
+
+  async function playCurrentStep(){
+    const token=++runToken;
+    clearTimeout(advanceTimer);
+    cancelSpeech();
+
+    playing=true;
+    paused=false;
+    pause.textContent='Pause';
+
+    renderPhone();
+    renderMeta();
+
+    // Let the new slide paint before narration begins.
+    await new Promise(resolve=>setTimeout(resolve,350));
+
+    if(token!==runToken || !playing) return;
+
+    const started=performance.now();
+
+    if(narrationEnabled){
+      const completed=await narrateStep(token);
+      if(!completed){
+        // Stay on this slide. Never automatically jump because narration
+        // failed or was interrupted.
+        return;
+      }
+    }else{
+      setVoiceState('Voice off');
+    }
+
+    if(token!==runToken || !playing) return;
+
+    // Ensure the audience gets a short visual hold after the final sentence.
+    const elapsed=performance.now()-started;
+    const minimum=steps[index].hold;
+    if(elapsed<minimum){
+      await new Promise(resolve=>setTimeout(resolve,minimum-elapsed));
+    }
+
+    if(token!==runToken || !playing || paused) return;
+
+    // Exactly one controlled transition.
+    if(index<steps.length-1){
+      index++;
+      playCurrentStep();
+    }else{
+      playing=false;
+      pause.textContent='Play';
+      setVoiceState('Finished');
+    }
+  }
+
+  function open(){
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden','false');
+    index=0;
+    playing=true;
+    paused=false;
+    pause.textContent='Pause';
+    populateVoices();
+    playCurrentStep();
+  }
+
+  function exit(){
+    playing=false;
+    paused=false;
+    ++runToken;
+    clearTimeout(advanceTimer);
+    cancelSpeech();
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden','true');
+  }
+
+  function nextStep(){
+    if(index>=steps.length-1){
+      replayAll();
+      return;
+    }
+
+    // Manual navigation is authoritative. Invalidate ALL callbacks from
+    // the previous slide before changing index.
+    ++runToken;
+    clearTimeout(advanceTimer);
+    cancelSpeech();
+
+    index++;
+    playing=true;
+    paused=false;
+    pause.textContent='Pause';
+    playCurrentStep();
+  }
+
+  function previousStep(){
+    if(index<=0) return;
+
+    ++runToken;
+    clearTimeout(advanceTimer);
+    cancelSpeech();
+
+    index--;
+    playing=true;
+    paused=false;
+    pause.textContent='Pause';
+    playCurrentStep();
+  }
+
+  function replayAll(){
+    ++runToken;
+    clearTimeout(advanceTimer);
+    cancelSpeech();
+
+    index=0;
+    playing=true;
+    paused=false;
+    pause.textContent='Pause';
+    playCurrentStep();
+  }
+
+  function togglePause(){
+    if(!playing) return;
+
+    if(!paused){
+      paused=true;
+      clearTimeout(advanceTimer);
+      if('speechSynthesis' in window) window.speechSynthesis.cancel();
+      setVoiceState('Paused');
+      pause.textContent='Play';
+    }else{
+      paused=false;
+      pause.textContent='Pause';
+      setVoiceState('Resuming');
+      // Restart the current sentence, never jump to another one.
+      playCurrentStepFromCurrentSentence();
+    }
+  }
+
+  async function playCurrentStepFromCurrentSentence(){
+    const token=runToken;
+    const stepAtStart=index;
+
+    if(token===0 || !playing || paused) return;
+
+    if(narrationEnabled && 'speechSynthesis' in window){
+      const completed=await narrateStepFromCurrent(token,stepAtStart);
+      if(!completed || token!==runToken || !playing || paused) return;
+
+      if(index<steps.length-1){
+        index++;
+        playCurrentStep();
+      }else{
+        playing=false;
+        pause.textContent='Play';
+        setVoiceState('Finished');
+      }
+    }else{
+      playCurrentStep();
+    }
+  }
+
+  async function narrateStepFromCurrent(token,stepAtStart){
+    while(sentenceIndex<steps[stepAtStart].narration.length){
+      if(token!==runToken || !playing || paused) return false;
+
+      const currentSentence=sentenceIndex;
+      const spoken=await speakSentence(token,stepAtStart,currentSentence);
+
+      if(token!==runToken || !playing || paused) return false;
+
+      if(spoken){
+        sentenceIndex++;
+      }else{
+        await new Promise(resolve=>setTimeout(resolve,300));
+        if(token!==runToken || !playing || paused) return false;
+        const retry=await speakSentence(token,stepAtStart,currentSentence);
+        if(!retry){
+          setVoiceState('Voice issue • tap Next');
+          return false;
+        }
+        sentenceIndex++;
+      }
+
+      if(sentenceIndex<steps[stepAtStart].narration.length){
+        await new Promise(resolve=>setTimeout(resolve,260));
+      }
+    }
+
+    setVoiceState('Finished');
+    return true;
+  }
+
+  function toggleVoice(){
+    narrationEnabled=!narrationEnabled;
+
+    ++runToken;
+    clearTimeout(advanceTimer);
+    cancelSpeech();
+
+    if(narrationEnabled){
+      voiceBtn.textContent='🔊 Voice';
+      playing=true;
+      paused=false;
+      pause.textContent='Pause';
+      playCurrentStep();
+    }else{
+      voiceBtn.textContent='🔇 Voice Off';
+      setVoiceState('Voice off');
+    }
+  }
+
+  function replayVoice(){
+    if(!narrationEnabled){
+      narrationEnabled=true;
+      voiceBtn.textContent='🔊 Voice';
+    }
+
+    ++runToken;
+    clearTimeout(advanceTimer);
+    cancelSpeech();
+
+    sentenceIndex=0;
+    playing=true;
+    paused=false;
+    pause.textContent='Pause';
+    renderPhone();
+    renderMeta();
+    playCurrentStep();
+  }
+
+  function changeVoice(){
+    if(!('speechSynthesis' in window)) return;
+
+    const list=window.speechSynthesis.getVoices();
+    selectedVoice=list.find(v=>v.name===voiceSelect.value) || selectedVoice;
+
+    // Changing voice must restart THIS slide only.
+    ++runToken;
+    clearTimeout(advanceTimer);
+    cancelSpeech();
+    sentenceIndex=0;
+    playing=true;
+    paused=false;
+    pause.textContent='Pause';
+    playCurrentStep();
+  }
+
+  launch.addEventListener('click',open);
+  next.addEventListener('click',nextStep);
+  replay.addEventListener('click',replayAll);
+  pause.addEventListener('click',togglePause);
+  voiceBtn.addEventListener('click',toggleVoice);
+  voiceReplay.addEventListener('click',replayVoice);
+  voiceSelect.addEventListener('change',changeVoice);
+  close.addEventListener('click',exit);
+  closeTop.addEventListener('click',exit);
+
+  document.addEventListener('keydown',e=>{
+    if(!overlay.classList.contains('show')) return;
+
+    if(e.key==='Escape'){
+      e.preventDefault();
+      exit();
+      return;
+    }
+
+    if(e.key==='ArrowRight'){
+      e.preventDefault();
+      nextStep();
+      return;
+    }
+
+    if(e.key==='ArrowLeft'){
+      e.preventDefault();
+      previousStep();
+      return;
+    }
+
+    if(e.key===' '){
+      e.preventDefault();
+      togglePause();
+    }
+  });
+
+  if('speechSynthesis' in window){
+    window.speechSynthesis.onvoiceschanged=populateVoices;
+    populateVoices();
+  }else{
+    narrationEnabled=false;
+    voiceBtn.disabled=true;
+    voiceBtn.textContent='🔇 Voice unavailable';
+    voicePanel.classList.add('voice-disabled');
+  }
+})();
+</script>
+</body>
+</html>
